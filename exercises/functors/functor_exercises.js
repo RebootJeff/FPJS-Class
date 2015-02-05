@@ -1,6 +1,6 @@
 require('lambdajs').expose(global);
 require('pointfree-fantasy').expose(this);
-var Maybe = require('pointfree-fantasy/instances/Maybe');
+var Maybe = require('pointfree-fantasy/instances/maybe');
 var Identity = require('fantasy-identities');
 var Future = require('data.future');
 var Either = require('data.either');
@@ -14,6 +14,7 @@ var Right = Either.Right;
 
 var ex1 = undefined
 
+ex1 = map(_.add(1));
 
 
 //xercise 2
@@ -21,8 +22,9 @@ var ex1 = undefined
 // Use _.head to get the first element of the list
 var xs = Identity(['do', 'ray', 'me', 'fa', 'so', 'la', 'ti', 'do']);
 
-var ex2 = undefined
+var ex2 = undefined;
 
+ex2 = map(_.head);
 
 
 // Exercise 3
@@ -34,6 +36,7 @@ var user = { id: 2, name: "Albert" };
 
 var ex3 = undefined
 
+ex3 = _.compose(map(_.head), (safeGet('name')));
 
 // Exercise 4
 // ==========
@@ -43,8 +46,13 @@ var ex4 = function (n) {
   if (n) { return parseInt(n); }
 };
 
-var ex4 = undefined
+var ex4 = undefined;
 
+ex4 = function(n) {
+  return Maybe(parseInt(n));
+};
+
+ex4 = _.compose(Maybe, parseInt);
 
 
 // Exercise 5
@@ -55,13 +63,19 @@ var ex4 = undefined
 var getPost = function (i) {
   return new Future(function(rej, res) {
     setTimeout(function(){
-      res({id: i, title: 'Love them futures'})  
+      res({id: i, title: 'Love them futures'})
     }, 300)
   });
 }
 
-var ex5 = undefined
+var ex5 = undefined;
 
+ex5 = _.compose(map(toUpperCase), map(_.get('title')), getPost);
+
+ex5 = _.compose(map(_.compose(toUpperCase, _.get('title'))), getPost);
+
+var getUpperCaseTitle = _.compose(toUpperCase, _.get('title'));
+ex5 = _.compose(map(getUpperCaseTitle), getPost);
 
 
 // Exercise 6
@@ -76,7 +90,7 @@ var checkActive = function(user) {
 
 var ex6 = undefined
 
-
+ex6 = _.compose(map(showWelcome), checkActive);
 
 // Exercise 7
 // ==========
@@ -86,7 +100,9 @@ var ex7 = function(x) {
   return undefined // <--- write me. (don't be pointfree)
 }
 
-
+ex7 = function(x) {
+  return (x.length > 3) ? Right(x) : Left('You need > 3'); // <--- write me. (don't be pointfree)
+};
 
 // Exercise 8
 // ==========
@@ -95,5 +111,8 @@ var ex7 = function(x) {
 var save = function(x){ console.log("SAVED USER!"); return x; }
 
 var ex8 = undefined
+
+// NOTE: When `ex7` is invoked, it "returns" either a Right or a Left (i.e., it returns an "Either").
+ex8 = _.compose(map(save), ex7);
 
 module.exports = {ex1: ex1, ex2: ex2, ex3: ex3, ex4: ex4, ex5: ex5, ex6: ex6, ex7: ex7, ex8: ex8}
