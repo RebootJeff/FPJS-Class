@@ -17,15 +17,18 @@ var CARS = [
 // ============
 // use _.compose() to rewrite the function below. Hint: _.get() is curried.
 var isLastInStock = function(cars) {
-  var reversed_cars = _.last(cars)
-  return _.get('in_stock', reversed_cars)
-}
+  var reversed_cars = _.last(cars);
+  return _.get('in_stock', reversed_cars);
+};
+
+isLastInStock = _.compose(_.get('in_stock'), _.last);
 
 // Exercise 2:
 // ============
 // use _.compose(), _.get() and _.head() to retrieve the name of the first car
 var nameOfFirstCar = undefined;
 
+nameOfFirstCar = _.compose(_.get('name'), _.head);
 
 // Exercise 3:
 // ============
@@ -39,6 +42,8 @@ var averageDollarValue = function(cars) {
   return _average(dollar_values);
 }
 
+averageDollarValue = _.compose(_average, map(_.get('dollar_value')));
+
 
 // Exercise 4:
 // ============
@@ -48,6 +53,9 @@ var _underscore = replace(/\W+/g, '_'); //<-- leave this alone and use to saniti
 
 //+ sanitizeNames :: [Car] -> String
 var sanitizeNames = undefined
+
+sanitizeNames = _.compose(map(_underscore), map(toLowerCase), map(_.get('name')));
+sanitizeNames = map(_.compose(_underscore, toLowerCase, _.get('name')));
 
 
 // Bonus 1:
@@ -62,6 +70,15 @@ var availablePrices = function(cars) {
   }).join(', ');
 }
 
+availablePrices = _.compose(join(', '), map(accounting.formatMoney), map(_.get('dollar_value')), _.filter(_.get('in_stock')));
+availablePrices = _.compose(join(', '), map(_.compose(accounting.formatMoney, _.get('dollar_value'))), _.filter(_.get('in_stock')));
+
+var formatDollarValues = _.compose(accounting.formatMoney, _.get('dollar_value'));
+availablePrices = _.compose(join(', '), map(formatDollarValues), _.filter(_.get('in_stock')));
+
+var findInStock = _.filter(_.get('in_stock'));
+var formatDollarValues = map(_.compose(accounting.formatMoney, _.get('dollar_value')));
+var availablePrices = _.compose(join(', '), formatDollarValues, findInStock);
 
 // Bonus 2:
 // ============
