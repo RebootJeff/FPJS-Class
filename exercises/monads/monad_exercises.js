@@ -22,8 +22,11 @@ var user = {
   }
 };
 
-var ex1 = undefined
+var ex1 = undefined;
 
+ex1 = _.compose(mjoin, map(safeGet('name')), mjoin, map(safeGet('street')), safeGet('address'));
+
+ex1 = _.compose(chain(safeGet('name')), chain(safeGet('street')), safeGet('address'));
 
 // Exercise 2
 // ==========
@@ -36,15 +39,19 @@ var pureLog = function(x) {
   return x;
 }.toIO();
 
-var ex2 = undefined
+var ex2 = undefined;
 
+ex2 = _.compose(mjoin, map(pureLog), getFile);
 
+ex2 = _.compose(chain(pureLog), getFile);
 
 // Exercise 3
 // ==========
 // Use monads to first get the Post with getPost(), then pass it's id in to getComments().
 
-var ex3 = undefined
+var ex3 = undefined;
+
+ex3 = _.compose(mjoin, map(getComments), map(_.get('id')), getPost);
 
 
 // Exercise 4
@@ -52,7 +59,11 @@ var ex3 = undefined
 // Use safeGet to retrieve the user's name, then upperCase it, then safeGet the first char: safeGet(0). The signature should be: User -> Maybe(String)
 var ex4 = undefined
 
+ex4 = _.compose(mjoin, map(safeGet(0)), map(toUpperCase), safeGet('name'));
 
+var convertFirstToUpperCase = _.compose(safeGet(0), toUpperCase);
+ex4 = _.compose(mjoin, map(convertFirstToUpperCase), safeGet('name'));
+ex4 = _.compose(chain(convertFirstToUpperCase), safeGet('name'));
 
 // HELPERS
 // =====================
